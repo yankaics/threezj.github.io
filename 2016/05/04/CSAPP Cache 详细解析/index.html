@@ -101,7 +101,7 @@
 <meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/QQ%E6%88%AA%E5%9C%9620160503224541.jpg">
 <meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/QQ%E6%88%AA%E5%9C%9620160503230817.jpg">
 <meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/QQ%E6%88%AA%E5%9C%9620160503235056.jpg">
-<meta property="og:updated_time" content="2016-06-23T16:14:46.773Z">
+<meta property="og:updated_time" content="2016-06-23T16:32:05.757Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP Cache 详细解析">
 <meta name="twitter:description" content="前言又要来推荐CSAPP这本书啦。很多同学可能写了这么久代码，计算机的基本工作方式都不太懂，看这本书会给你一种融会贯通的感觉，小到二进制位级操作，大到手撸web服务器。
@@ -309,7 +309,7 @@
 <p>很明显。数据运输过程的时间，就是性能的提现。没有数据<code>CPU</code>只能在那里等待.所以为了加快主存到<code>CPU</code>的速度，系统设计者采取了存储设备分层的结构.</p>
 <p><code>Cache</code>又称为<code>高速缓存存储器</code>，是一种非常小非常快的存储器，同时也非常贵，放在<code>CPU</code>和<code>主存</code>之间，相当于中介的存在，每当<code>CPU</code>取数据的时候总是先从<code>Cache</code>中找，如果<code>Cache</code>没有，再到<code>主存</code>找。</p>
 <p><code>CPU</code>和<code>主存</code>直接会放置多个<code>Cache</code>，越靠近<code>CPU</code>则越小越快越贵。</p>
-<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/QQ%E6%88%AA%E5%9C%9620160503230817.jpg" alt=""></p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/QQ%E6%88%AA%E5%9C%9620160503230817.jpg" alt=""><br><a id="more"></a></p>
 <h2 id="局部性"><a href="#局部性" class="headerlink" title="局部性"></a>局部性</h2><p>程序一般使用数据，都倾向于使用地址靠近的数据，或者是最近刚刚使用过的数据。回想下你之前写的程序是不是这样。比如说数组，一整块连续的地址循环访问。不断访问同一个数据去做求和之类的操作。所以分为如下</p>
 <ul>
 <li>时间局部性</li>
