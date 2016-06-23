@@ -1,0 +1,577 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言在之前用java的时候，总是对static的初始化顺序存有疑惑，今天在重撸Thinking in Java,一下子豁然开朗，特此做下笔记。
+初始化顺序类内，总是先初始化字段，字段定义的先后顺序决定了初始化的顺序，然后再初始化构造器。1234567891011121314151617181920212223242526272829303132// When the constructor is">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java static 初始化顺序">
+<meta property="og:url" content="http://threezj.com/2016/03/02/Java static 初始化顺序/index.html">
+<meta property="og:site_name" content="一派胡言">
+<meta property="og:description" content="前言在之前用java的时候，总是对static的初始化顺序存有疑惑，今天在重撸Thinking in Java,一下子豁然开朗，特此做下笔记。
+初始化顺序类内，总是先初始化字段，字段定义的先后顺序决定了初始化的顺序，然后再初始化构造器。1234567891011121314151617181920212223242526272829303132// When the constructor is">
+<meta property="og:updated_time" content="2016-06-23T16:21:39.454Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java static 初始化顺序">
+<meta name="twitter:description" content="前言在之前用java的时候，总是对static的初始化顺序存有疑惑，今天在重撸Thinking in Java,一下子豁然开朗，特此做下笔记。
+初始化顺序类内，总是先初始化字段，字段定义的先后顺序决定了初始化的顺序，然后再初始化构造器。1234567891011121314151617181920212223242526272829303132// When the constructor is">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://threezj.com/2016/03/02/Java static 初始化顺序/"/>
+
+  <title> Java static 初始化顺序 | 一派胡言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一派胡言</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            Über
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java static 初始化顺序
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <time itemprop="dateCreated" datetime="2016-03-02T15:13:06+08:00" content="2016-03-02">
+              2016-03-02
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在之前用<code>java</code>的时候，总是对<code>static</code>的初始化顺序存有疑惑，今天在重撸<code>Thinking in Java</code>,一下子豁然开朗，特此做下笔记。</p>
+<h2 id="初始化顺序"><a href="#初始化顺序" class="headerlink" title="初始化顺序"></a>初始化顺序</h2><p>类内，总是先初始化字段，字段定义的先后顺序决定了初始化的顺序，然后再初始化构造器。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// When the constructor is called to create a</span></span><br><span class="line"><span class="comment">// Window object, you'll see a message:</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Window</span> </span>&#123;</span><br><span class="line">  Window(<span class="keyword">int</span> marker) &#123; print(<span class="string">"Window("</span> + marker + <span class="string">")"</span>); &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">House</span> </span>&#123;</span><br><span class="line">  Window w1 = <span class="keyword">new</span> Window(<span class="number">1</span>); <span class="comment">// Before constructor</span></span><br><span class="line">  House() &#123;</span><br><span class="line">    <span class="comment">// Show that we're in the constructor:</span></span><br><span class="line">    print(<span class="string">"House()"</span>);</span><br><span class="line">    w3 = <span class="keyword">new</span> Window(<span class="number">33</span>); <span class="comment">// Reinitialize w3</span></span><br><span class="line">  &#125;</span><br><span class="line">  Window w2 = <span class="keyword">new</span> Window(<span class="number">2</span>); <span class="comment">// After constructor</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123; print(<span class="string">"f()"</span>); &#125;</span><br><span class="line">  Window w3 = <span class="keyword">new</span> Window(<span class="number">3</span>); <span class="comment">// At end</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderOfInitialization</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    House h = <span class="keyword">new</span> House();</span><br><span class="line">    h.f(); <span class="comment">// Shows that construction is done</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125; </span><br><span class="line"><span class="comment">/* Output:</span><br><span class="line">Window(1)</span><br><span class="line">Window(2)</span><br><span class="line">Window(3)</span><br><span class="line">House()</span><br><span class="line">Window(33)</span><br><span class="line">f()</span><br><span class="line">*/</span><span class="comment">//:~</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="static数据的初始化"><a href="#static数据的初始化" class="headerlink" title="static数据的初始化"></a><code>static</code>数据的初始化</h2><p>加上<code>static</code>限定的字段，是所谓的类字段，也就是说这个字段的拥有者不是对象而是类。无论创建多少对象，<code>static</code>数据都只有一份。</p>
+<p>类内总是先初始化<code>static</code>字段，再初始化一般字段。接着初始化构造器。但是如果不创建这个类的对象，那这个对象是不会进行初始化的，并且只执行一次。</p>
+<p>如下面的代码，在<code>StaticInitialization</code>类中，先初始化<code>static Table table = new Table();</code>，然后才去初始化<code>Table</code>对象，不然是不会被初始化的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bowl</span> </span>&#123;</span><br><span class="line">  Bowl(<span class="keyword">int</span> marker) &#123;</span><br><span class="line">    print(<span class="string">"Bowl("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">f1</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"f1("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Table</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> Bowl bowl1 = <span class="keyword">new</span> Bowl(<span class="number">1</span>);</span><br><span class="line">  Table() &#123;</span><br><span class="line">    print(<span class="string">"Table()"</span>);</span><br><span class="line">    bowl2.f1(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">f2</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"f2("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">static</span> Bowl bowl2 = <span class="keyword">new</span> Bowl(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cupboard</span> </span>&#123;</span><br><span class="line">  Bowl bowl3 = <span class="keyword">new</span> Bowl(<span class="number">3</span>);</span><br><span class="line">  <span class="keyword">static</span> Bowl bowl4 = <span class="keyword">new</span> Bowl(<span class="number">4</span>);</span><br><span class="line">  Cupboard() &#123;</span><br><span class="line">    print(<span class="string">"Cupboard()"</span>);</span><br><span class="line">    bowl4.f1(<span class="number">2</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">f3</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"f3("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">static</span> Bowl bowl5 = <span class="keyword">new</span> Bowl(<span class="number">5</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticInitialization</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Creating new Cupboard() in main"</span>);</span><br><span class="line">    <span class="keyword">new</span> Cupboard();</span><br><span class="line">    print(<span class="string">"Creating new Cupboard() in main"</span>);</span><br><span class="line">    <span class="keyword">new</span> Cupboard();</span><br><span class="line">    table.f2(<span class="number">1</span>);</span><br><span class="line">    cupboard.f3(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">static</span> Table table = <span class="keyword">new</span> Table();</span><br><span class="line">  <span class="keyword">static</span> Cupboard cupboard = <span class="keyword">new</span> Cupboard();</span><br><span class="line">&#125; <span class="comment">/* Output:</span><br><span class="line">Bowl(1)</span><br><span class="line">Bowl(2)</span><br><span class="line">Table()</span><br><span class="line">f1(1)</span><br><span class="line">Bowl(4)</span><br><span class="line">Bowl(5)</span><br><span class="line">Bowl(3)</span><br><span class="line">Cupboard()</span><br><span class="line">f1(2)</span><br><span class="line">Creating new Cupboard() in main</span><br><span class="line">Bowl(3)</span><br><span class="line">Cupboard()</span><br><span class="line">f1(2)</span><br><span class="line">Creating new Cupboard() in main</span><br><span class="line">Bowl(3)</span><br><span class="line">Cupboard()</span><br><span class="line">f1(2)</span><br><span class="line">f2(1)</span><br><span class="line">f3(1)</span><br><span class="line">*/</span><span class="comment">//:~</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="显示的静态初始化（也就是静态块）"><a href="#显示的静态初始化（也就是静态块）" class="headerlink" title="显示的静态初始化（也就是静态块）"></a>显示的静态初始化（也就是静态块）</h2><p>把多个初始化语句包在一个<code>static</code>花括号里，叫做<strong>静态块</strong>，其实就是把多个static合在一起写了，本质是一样的。只有首次创建对象或者首次访问类的字段时才会执行，而且仅仅一次。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cup</span> </span>&#123;</span><br><span class="line">  Cup(<span class="keyword">int</span> marker) &#123;</span><br><span class="line">    print(<span class="string">"Cup("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"f("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cups</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> Cup cup1;</span><br><span class="line">  <span class="keyword">static</span> Cup cup2;</span><br><span class="line">  <span class="keyword">static</span> &#123;</span><br><span class="line">    cup1 = <span class="keyword">new</span> Cup(<span class="number">1</span>);</span><br><span class="line">    cup2 = <span class="keyword">new</span> Cup(<span class="number">2</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Cups() &#123;</span><br><span class="line">    print(<span class="string">"Cups()"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExplicitStatic</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Inside main()"</span>);</span><br><span class="line">    Cups.cup1.f(<span class="number">99</span>);  <span class="comment">// (1)</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// static Cups cups1 = new Cups();  // (2)</span></span><br><span class="line">  <span class="comment">// static Cups cups2 = new Cups();  // (2)</span></span><br><span class="line">&#125; <span class="comment">/* Output:</span><br><span class="line">Inside main()</span><br><span class="line">Cup(1)</span><br><span class="line">Cup(2)</span><br><span class="line">f(99)</span><br><span class="line">*/</span><span class="comment">//:~</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="非静态实例初始化"><a href="#非静态实例初始化" class="headerlink" title="非静态实例初始化"></a>非静态实例初始化</h2><p>这个没什么好讲的，就是普通初始化，按顺序执行，可以多次执行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mug</span> </span>&#123;</span><br><span class="line">  Mug(<span class="keyword">int</span> marker) &#123;</span><br><span class="line">    print(<span class="string">"Mug("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> marker)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"f("</span> + marker + <span class="string">")"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mugs</span> </span>&#123;</span><br><span class="line">  Mug mug1;</span><br><span class="line">  Mug mug2;</span><br><span class="line">  &#123;</span><br><span class="line">    mug1 = <span class="keyword">new</span> Mug(<span class="number">1</span>);</span><br><span class="line">    mug2 = <span class="keyword">new</span> Mug(<span class="number">2</span>);</span><br><span class="line">    print(<span class="string">"mug1 &amp; mug2 initialized"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Mugs() &#123;</span><br><span class="line">    print(<span class="string">"Mugs()"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  Mugs(<span class="keyword">int</span> i) &#123;</span><br><span class="line">    print(<span class="string">"Mugs(int)"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Inside main()"</span>);</span><br><span class="line">    <span class="keyword">new</span> Mugs();</span><br><span class="line">    print(<span class="string">"new Mugs() completed"</span>);</span><br><span class="line">    <span class="keyword">new</span> Mugs(<span class="number">1</span>);</span><br><span class="line">    print(<span class="string">"new Mugs(1) completed"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="comment">/* Output:</span><br><span class="line">Inside main()</span><br><span class="line">Mug(1)</span><br><span class="line">Mug(2)</span><br><span class="line">mug1 &amp; mug2 initialized</span><br><span class="line">Mugs()</span><br><span class="line">new Mugs() completed</span><br><span class="line">Mug(1)</span><br><span class="line">Mug(2)</span><br><span class="line">mug1 &amp; mug2 initialized</span><br><span class="line">Mugs(int)</span><br><span class="line">new Mugs(1) completed</span><br><span class="line">*/</span><span class="comment">//:~</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>实例代码均来自《Thinking in Java》</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/23/Android Handler Looper Message 详细分析/" rel="next" title="Android Handler Looper Message 详细分析">
+                <i class="fa fa-chevron-left"></i> Android Handler Looper Message 详细分析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/12/Union-Find/" rel="prev" title="Union-Find">
+                Union-Find <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Threezj" />
+          <p class="site-author-name" itemprop="name">Threezj</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">Artikel</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化顺序"><span class="nav-number">2.</span> <span class="nav-text">初始化顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#static数据的初始化"><span class="nav-number">3.</span> <span class="nav-text">static数据的初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示的静态初始化（也就是静态块）"><span class="nav-number">4.</span> <span class="nav-text">显示的静态初始化（也就是静态块）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非静态实例初始化"><span class="nav-number">5.</span> <span class="nav-text">非静态实例初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Threezj</span>
+</div>
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

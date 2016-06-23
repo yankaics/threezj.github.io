@@ -1,0 +1,644 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Algorithm," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="归并排序(MergeSort)复杂度O(nlogn).
+核心思想就是采用分而治之的方法，递归的合并两个有序的数组。效率比较高，缺点是空间复杂度高，会用到额外的数组。
+原理核心代码是合并的函数。合并的前提是保证左右两边的数组分别有序，在合并之前和之后在Java中我们可以用断言来保证数组有序。
+合并的原理其实也很简单，先把a数组中的内容复制到额外储存的temp数组中去。分别用两个index指向a数组的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="复杂排序之归并、快速、三向切分、堆排序 详细总结">
+<meta property="og:url" content="http://threezj.com/2016/03/16/复杂排序之归并、快速、三向切分、堆排序 详细总结/index.html">
+<meta property="og:site_name" content="一派胡言">
+<meta property="og:description" content="归并排序(MergeSort)复杂度O(nlogn).
+核心思想就是采用分而治之的方法，递归的合并两个有序的数组。效率比较高，缺点是空间复杂度高，会用到额外的数组。
+原理核心代码是合并的函数。合并的前提是保证左右两边的数组分别有序，在合并之前和之后在Java中我们可以用断言来保证数组有序。
+合并的原理其实也很简单，先把a数组中的内容复制到额外储存的temp数组中去。分别用两个index指向a数组的">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortMerge-sort-example-300px.gif">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316182738.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316185505.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortSorting_quicksort_anim.gif">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316192502.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316194034.jpg">
+<meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/4/4d/Heapsort-example.gif">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316203033.jpg">
+<meta property="og:updated_time" content="2016-06-23T16:19:49.010Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="复杂排序之归并、快速、三向切分、堆排序 详细总结">
+<meta name="twitter:description" content="归并排序(MergeSort)复杂度O(nlogn).
+核心思想就是采用分而治之的方法，递归的合并两个有序的数组。效率比较高，缺点是空间复杂度高，会用到额外的数组。
+原理核心代码是合并的函数。合并的前提是保证左右两边的数组分别有序，在合并之前和之后在Java中我们可以用断言来保证数组有序。
+合并的原理其实也很简单，先把a数组中的内容复制到额外储存的temp数组中去。分别用两个index指向a数组的">
+<meta name="twitter:image" content="http://7xrsib.com1.z0.glb.clouddn.com/sortMerge-sort-example-300px.gif">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://threezj.com/2016/03/16/复杂排序之归并、快速、三向切分、堆排序 详细总结/"/>
+
+  <title> 复杂排序之归并、快速、三向切分、堆排序 详细总结 | 一派胡言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一派胡言</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            Über
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                复杂排序之归并、快速、三向切分、堆排序 详细总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <time itemprop="dateCreated" datetime="2016-03-16T15:13:06+08:00" content="2016-03-16">
+              2016-03-16
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="归并排序-MergeSort"><a href="#归并排序-MergeSort" class="headerlink" title="归并排序(MergeSort)"></a>归并排序(MergeSort)</h2><p>复杂度<code>O(nlogn)</code>.</p>
+<p>核心思想就是采用分而治之的方法，递归的合并两个有序的数组。效率比较高，缺点是空间复杂度高，会用到额外的数组。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>核心代码是合并的函数。合并的前提是保证左右两边的数组分别有序，在合并之前和之后在<code>Java</code>中我们可以用断言来保证数组有序。</p>
+<p>合并的原理其实也很简单，先把<code>a</code>数组中的内容复制到额外储存的<code>temp</code>数组中去。分别用两个<code>index</code>指向<code>a</code>数组的起始位置和中间位置，保证<code>a</code>数组左右两边有序，比如<code>i</code>，<code>j</code>。现在开始从头扫描比较左右两个数组,若<code>a[i]&amp;lt;=a[j]</code>，则把<code>a[i]</code>放到<code>temp</code>数组中去，且<code>i</code>向前走一步。反正则放<code>a[j]</code>，且<code>j</code>走一步。若其中一个数组走完了，则把另一个数组剩余的数直接放到temp数组中。</p>
+<p>我们用递归的方式来实现左右两边有序。递归到数组只有1个数时肯定是有序的，再合并2个数，再退出来合并4个数，以此类推。</p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortMerge-sort-example-300px.gif" alt=""></p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316182738.jpg" alt=""><br><a id="more"></a></p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MergeSort</span> <span class="keyword">extends</span> <span class="title">BaseSort</span> </span>&#123;</span><br><span class="line">    Comparable[] temp ;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">merge</span><span class="params">(Comparable[] a, <span class="keyword">int</span> l, <span class="keyword">int</span> m, <span class="keyword">int</span> h)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=l;i&lt;=h;i++)&#123;</span><br><span class="line">            temp[i]=a[i];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> i=l;</span><br><span class="line">        <span class="keyword">int</span> j=m+<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> k=l;k&lt;=h;k++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(i&gt;m) a[k]=temp[j++];</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(j&gt;h) a[k]=temp[i++];</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(less(temp[i],temp[j])) a[k]=temp[i++];</span><br><span class="line">            <span class="keyword">else</span> a[k] = temp[j++];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a,<span class="keyword">int</span> l,<span class="keyword">int</span> h)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(l&lt;h)&#123;</span><br><span class="line">            <span class="keyword">int</span> mid = (l+h)/<span class="number">2</span>;</span><br><span class="line">            sort(a,l,mid);</span><br><span class="line">            sort(a,mid+<span class="number">1</span>,h);</span><br><span class="line">            merge(a,l,mid,h);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">        temp = <span class="keyword">new</span> Comparable[a.length];</span><br><span class="line"></span><br><span class="line">        sort(a,<span class="number">0</span>,a.length-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>归并排序对小数组排序时，由于会有多重的递归调用，所以速度没有插入排序快。可以在递归调用到小数组时改采用插入排序。小数组的意思是差不多10个数左右。</p>
+<p>如果递归时判断已经有序则不用继续递归。也可以增加效率。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a,<span class="keyword">int</span> l,<span class="keyword">int</span> h)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(l&lt;h)&#123;</span><br><span class="line">            <span class="keyword">int</span> mid = (l+h)/<span class="number">2</span>;</span><br><span class="line">            sort(a,l,mid);</span><br><span class="line">            sort(a,mid+<span class="number">1</span>,h);</span><br><span class="line">            <span class="keyword">if</span> (!less(a[mid+<span class="number">1</span>], a[mid])) <span class="keyword">return</span>;</span><br><span class="line">            merge(a,l,mid,h);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>另外在合并时交互两个数组的顺序，能节省复制数组到辅助数组的时间，但节省不了空间。<br><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316185505.jpg" alt=""></p>
+<h3 id="适用范围"><a href="#适用范围" class="headerlink" title="适用范围"></a>适用范围</h3><p>如果你对空间要求不高，且想要一个稳定的算法。那么可以使用归并排序。</p>
+<h2 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h2><p>传说中最快的排序算法，听说能裸写快排，月薪可上10k（ps.不是我说的。）</p>
+<p>快排平均情况下时间复杂度<code>O(nlogn)</code>，最糟糕情况<code>O(n²)</code>。<code>O(n²)</code>主要是因为选定的主元是极端值造成的，比如说最大值，最小值。不过这种情况一般很少出现，所以在进行快排之前我们需要对数组进行乱序，尽量避免这种情况的发生，</p>
+<h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>第一步打乱数组。</p>
+<p>然后也是分治法。归并是先分再合并。快排是先排序再分别排序两边。</p>
+<p>排序过程核心思想是为了选出一个数，把数组分成左右两边，左边比主元小，右边比主元大。</p>
+<p>选定第一个数作为主元。然后设定两个index指向数组首尾，比如<code>i</code>，<code>j</code>。接着从两边向中间扫描，分别用<code>a[i]</code>和<code>a[j]</code>和主元比较。若两边位置不对则交换<code>a[i]</code>和<code>a[j]</code>，比如说<code>a[i]</code>在扫描过程中遇到<code>a[i]&amp;gt;主元</code>，那么则停止扫描,因为我们需要左边的数小于主元,反正右边也一样等到<code>a[j]</code>也停下来,则交换<code>a[i]</code>和<code>a[j]</code>.</p>
+<p>得到中间的位置之后再分别左右递归排序。</p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortSorting_quicksort_anim.gif" alt=""></p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316192502.jpg" alt=""></p>
+<h3 id="优化-1"><a href="#优化-1" class="headerlink" title="优化"></a>优化</h3><p>第一步的随机打乱数组，虽然会耗费一定时间，但却是必要的。</p>
+<p>同样的小数组的排序，快排不如插入排序。所以小数组可以直接采用插入排序。</p>
+<p>主元的选择方式可以有多种，比如随机选择主元。或者选取三个数，取中位数为主元，但是会耗费一定时间。</p>
+<h3 id="适用范围-1"><a href="#适用范围-1" class="headerlink" title="适用范围"></a>适用范围</h3><p>虽然快速排序是不稳定的。但快速排序通常明显比其他<code>Ο(nlogn)</code>算法更快，因为它的内部循环很小。</p>
+<p>快速排序在对重复数据的排序时，会重复划分数据进行排序。虽然性能也还行，但这里可以进行改进，就是下面介绍的三向切分排序。</p>
+<h2 id="三向切分-3-way-partitioning"><a href="#三向切分-3-way-partitioning" class="headerlink" title="三向切分(3-way partitioning)"></a>三向切分(3-way partitioning)</h2><p>快速排序的一种改进，使快排在有大量重复元素的数据，同样能保持高效。</p>
+<h3 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h3><p>基本原理和快排差不多。三向切分的时候在划分数组时不是分为两组，而是分成三组。</p>
+<ul>
+<li>小于主元</li>
+<li>和主元相等</li>
+<li>大于主元</li>
+</ul>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316194034.jpg" alt=""></p>
+<p>具体排序方式和快排差不多我就不赘述了，我觉得三向切分代码写起来比快排要简单。大家直接看代码吧</p>
+<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreeWaySort</span> <span class="keyword">extends</span> <span class="title">BaseSort</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">        sort(a,<span class="number">0</span>,a.length-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a,<span class="keyword">int</span> l ,<span class="keyword">int</span> h)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(l&gt;=h) <span class="keyword">return</span>;</span><br><span class="line">        Comparable v = a[l];</span><br><span class="line">        <span class="keyword">int</span> i=l;</span><br><span class="line">        <span class="keyword">int</span> lv=l;</span><br><span class="line">        <span class="keyword">int</span> gh=h;</span><br><span class="line">        <span class="keyword">while</span>(i&lt;=gh)&#123;</span><br><span class="line">            <span class="keyword">int</span> cmpIndex = a[i].compareTo(v);</span><br><span class="line">            <span class="keyword">if</span>(cmpIndex&lt;<span class="number">0</span>) exch(a,i++,lv++);</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(cmpIndex&gt;<span class="number">0</span>) exch(a,i,gh--);</span><br><span class="line">            <span class="keyword">else</span> i++;</span><br><span class="line">        &#125;</span><br><span class="line">        sort(a,l,lv-<span class="number">1</span>);</span><br><span class="line">        sort(a,gh+<span class="number">1</span>,h);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h2><p>时间复杂度<code>O(nlogn)</code>，堆排序主要用二叉堆实现，在讲堆排序之前我们可以要先了解下二叉堆。</p>
+<h3 id="二叉堆"><a href="#二叉堆" class="headerlink" title="二叉堆"></a>二叉堆</h3><p>所谓的二叉堆用一颗二叉树表示，也就是每一个节点都大于它的左右子节点。也就是说根节点是最大的。</p>
+<p>二叉树用数组存储，可以用下标来表示节点。比如<code>i</code>这个节点的父节点为<code>i/2</code>，左儿子为<code>2*i</code>，右儿子为<code>2*i+1</code>.</p>
+<p>堆的操作主要有两种上浮和下沉。主要对应两种情况，比如在数组末尾添加节点，此时需要上浮节点，保证二叉堆的特点。反之在替换根节点是则需要下沉操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//上浮</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">swim</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(k/<span class="number">2</span>&gt;=<span class="number">1</span> &amp;&amp; less(pq[k/<span class="number">2</span>],pq[k]))&#123;</span><br><span class="line">        exch(pq,k/<span class="number">2</span>,k);</span><br><span class="line">        k=k/<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//下沉</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sink</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> k=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(<span class="number">2</span>*k&lt;N)&#123;</span><br><span class="line">        <span class="keyword">int</span> j=<span class="number">2</span>*k;</span><br><span class="line">        <span class="keyword">if</span>(less(pq[j],pq[j+<span class="number">1</span>])) j++;</span><br><span class="line">        <span class="keyword">if</span>(less(pq[k],pq[j])) exch(pq,k,j);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">        k = j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="堆排序实现原理"><a href="#堆排序实现原理" class="headerlink" title="堆排序实现原理"></a>堆排序实现原理</h3><p>分为两步。</p>
+<ul>
+<li>把数组排成二叉堆的顺序</li>
+<li>调换根节点和最后一个节点的位置，然后对根节点进行下沉操作。</li>
+</ul>
+<p><img src="http://upload.wikimedia.org/wikipedia/commons/4/4d/Heapsort-example.gif" alt=""></p>
+<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><p>可能我的代码和上面的动画略有出入，不过基本原理差不多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeapSort</span> <span class="keyword">extends</span> <span class="title">BaseSort</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> N;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Comparable[] a)</span> </span>&#123;</span><br><span class="line">        N =a.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> k = N/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">while</span>(k&gt;=<span class="number">1</span>)&#123;</span><br><span class="line">            sink(a,k);</span><br><span class="line">            k--;</span><br><span class="line">        &#125;</span><br><span class="line">        k = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(k&lt;=N)&#123;</span><br><span class="line">            exch(a,k,N--);</span><br><span class="line">            sink(a,k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="适用范围-2"><a href="#适用范围-2" class="headerlink" title="适用范围"></a>适用范围</h3><p>堆排序也是不稳定的。<br>堆排序在空间和时间上都是<code>O(nlogn)</code>,且没有最糟情况，但在平均情况下比快排慢。<br>所以现在大部分应用都是用的快排，因为它的平均效率很高，几乎不会有最糟情况发生。<br>但如果你的应用非常非常重视性能的保证，比如一些医学上的监控之类的。那么可以使用堆排序。<br>还有一个堆排序的缺点，是它无法利用缓存，几乎很少和相邻元素的比较。</p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>我测试了一下,用10000个数据，排序100次。使用上述四个算法的运行时间如下。</p>
+<blockquote>
+<p>冒泡排序 26.196000000000005<br>选择排序 9.046000000000006<br>插入排序 11.630999999999998<br>希尔排序 0.20900000000000016<br>归并排序 0.24100000000000016<br>快速排序 0.16800000000000012<br>三向快速排序 0.18300000000000013<br>堆排序 0.18800000000000014</p>
+</blockquote>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p><img src="http://7xrsib.com1.z0.glb.clouddn.com/sortQQ%E6%88%AA%E5%9C%9620160316203033.jpg" alt=""></p>
+<p>同时推荐一个很好的网站，对各种算法进行了总结，和动画描述。</p>
+<p><a href="http://www.sorting-algorithms.com/" target="_blank" rel="external">sorting-algorithms</a></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>维基百科</p>
+<p><a href="http://www.amazon.cn/%E5%9B%BE%E7%81%B5%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E4%B8%9B%E4%B9%A6-%E7%AE%97%E6%B3%95-%E5%A1%9E%E5%A5%87%E5%A8%81%E5%85%8B/dp/B009OCFQ0O/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1457882078&amp;sr=1-1&amp;keywords=%E7%AE%97%E6%B3%95" target="_blank" rel="external">算法 4th</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Algorithm/" rel="tag">#Algorithm</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/13/简单排序之冒泡、选择、插入、希尔详细总结/" rel="next" title="简单排序之冒泡、选择、插入、希尔详细总结">
+                <i class="fa fa-chevron-left"></i> 简单排序之冒泡、选择、插入、希尔详细总结
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/03/20/查找算法之顺序、二分、二叉搜索树、红黑树 详细比较总结/" rel="prev" title="查找算法之顺序、二分、二叉搜索树、红黑树 详细比较总结">
+                查找算法之顺序、二分、二叉搜索树、红黑树 详细比较总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Threezj" />
+          <p class="site-author-name" itemprop="name">Threezj</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">Artikel</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#归并排序-MergeSort"><span class="nav-number">1.</span> <span class="nav-text">归并排序(MergeSort)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">1.2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">1.3.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#适用范围"><span class="nav-number">1.4.</span> <span class="nav-text">适用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速排序"><span class="nav-number">2.</span> <span class="nav-text">快速排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理-1"><span class="nav-number">2.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化-1"><span class="nav-number">2.2.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#适用范围-1"><span class="nav-number">2.3.</span> <span class="nav-text">适用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三向切分-3-way-partitioning"><span class="nav-number">3.</span> <span class="nav-text">三向切分(3-way partitioning)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理-2"><span class="nav-number">3.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-1"><span class="nav-number">3.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆排序"><span class="nav-number">4.</span> <span class="nav-text">堆排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二叉堆"><span class="nav-number">4.1.</span> <span class="nav-text">二叉堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆排序实现原理"><span class="nav-number">4.2.</span> <span class="nav-text">堆排序实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现-2"><span class="nav-number">4.3.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#适用范围-2"><span class="nav-number">4.4.</span> <span class="nav-text">适用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能测试"><span class="nav-number">5.</span> <span class="nav-text">性能测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">6.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Threezj</span>
+</div>
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
