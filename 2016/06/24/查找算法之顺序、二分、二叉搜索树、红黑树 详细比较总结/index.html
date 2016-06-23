@@ -1,0 +1,631 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言一般用符号表来储存键值对，就好像字典那样，通过索引来查找值，若键重复则覆盖值。我们能希望找到一种高效的查找算法使在平均情况和最差情况下，时间复杂度都能达到O(logn)。下面会逐步介绍四种算法，最终达到我们的目的。
+顺序查找用链表实现，无法索引数据，必须遍历找数据，速度比较慢，查找插入时间复杂度都为O(n)，而且无法保证有序。但是实现简单，适用于小型数据。
+123456789101112131">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2016/06/24/查找算法之顺序、二分、二叉搜索树、红黑树 详细比较总结/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言一般用符号表来储存键值对，就好像字典那样，通过索引来查找值，若键重复则覆盖值。我们能希望找到一种高效的查找算法使在平均情况和最差情况下，时间复杂度都能达到O(logn)。下面会逐步介绍四种算法，最终达到我们的目的。
+顺序查找用链表实现，无法索引数据，必须遍历找数据，速度比较慢，查找插入时间复杂度都为O(n)，而且无法保证有序。但是实现简单，适用于小型数据。
+123456789101112131">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320221749.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320222706.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320225636.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/search2-3_insertion.svg.png">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320231811.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320232738.jpg">
+<meta property="og:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320233331.jpg">
+<meta property="og:updated_time" content="2016-06-23T14:34:15.616Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="前言一般用符号表来储存键值对，就好像字典那样，通过索引来查找值，若键重复则覆盖值。我们能希望找到一种高效的查找算法使在平均情况和最差情况下，时间复杂度都能达到O(logn)。下面会逐步介绍四种算法，最终达到我们的目的。
+顺序查找用链表实现，无法索引数据，必须遍历找数据，速度比较慢，查找插入时间复杂度都为O(n)，而且无法保证有序。但是实现简单，适用于小型数据。
+123456789101112131">
+<meta name="twitter:image" content="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320221749.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/06/24/查找算法之顺序、二分、二叉搜索树、红黑树 详细比较总结/"/>
+
+  <title>  | Hexo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Hexo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            Über
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <time itemprop="dateCreated" datetime="2016-06-24T00:04:52+08:00" content="2016-06-24">
+              2016-06-24
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>一般用<code>符号表</code>来储存键值对，就好像字典那样，通过索引来查找值，若键重复则覆盖值。我们能希望找到一种高效的查找算法使在平均情况和最差情况下，时间复杂度都能达到<code>O(logn)</code>。下面会逐步介绍四种算法，最终达到我们的目的。</p>
+<h2 id="顺序查找"><a href="#顺序查找" class="headerlink" title="顺序查找"></a>顺序查找</h2><p>用链表实现，无法索引数据，必须遍历找数据，速度比较慢，查找插入时间复杂度都为<code>O(n)</code>，而且无法保证有序。但是实现简单，适用于小型数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SequentialSearchST</span>&lt;<span class="title">Key</span>,<span class="title">Value</span>&gt;  </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Node head;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size=<span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(Key key,Value v)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        Node p=head;</span><br><span class="line">        <span class="keyword">while</span>(p!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(p.key.equals(key))&#123;</span><br><span class="line">                p.v=v;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            p=p.next;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        head=<span class="keyword">new</span> Node(key,v,head);</span><br><span class="line">        size++;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Value <span class="title">get</span><span class="params">(Key key)</span></span>&#123;</span><br><span class="line">        Node p=head;</span><br><span class="line">        <span class="keyword">while</span> (p!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(p.key.equals(key))&#123;</span><br><span class="line">                <span class="keyword">return</span>  p.v;</span><br><span class="line">            &#125;</span><br><span class="line">            p=p.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h2><p>用数组保存数据，保证有序。二分查找速度很快，但是仅限于查找。因为插入的时候要保证有序，所以要往后移动数据以便插入。查找复杂度<code>O(logn)</code>,插入复杂度<code>O(n)</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BinarySearch</span>&lt;<span class="title">Key</span> <span class="keyword">extends</span> <span class="title">Comparable</span>,<span class="title">Value</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(Key key,Value value)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index=rank(key);</span><br><span class="line">        <span class="comment">//键相等则覆盖值</span></span><br><span class="line">        <span class="keyword">if</span>(keys[index]!=<span class="keyword">null</span>&amp;&amp;key.compareTo(keys[index])==<span class="number">0</span>)&#123; </span><br><span class="line">            values[index]=value;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//把数据往后移，以便插入</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=size+<span class="number">1</span>;i&gt;index;i--)&#123;</span><br><span class="line">            keys[i]=keys[i-<span class="number">1</span>];</span><br><span class="line">            values[i]=values[i-<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        keys[index]=key;</span><br><span class="line">        values[index]=value;</span><br><span class="line">        size++;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Value <span class="title">get</span><span class="params">(Key key)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index=rank(key);<span class="comment">//二分查找</span></span><br><span class="line">        <span class="keyword">if</span>(keys[index]!=<span class="keyword">null</span> &amp;&amp; key.compareTo(keys[index])==<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> values[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">rank</span><span class="params">(Key key)</span></span>&#123;<span class="keyword">return</span> rank(key,<span class="number">0</span>,size);&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">rank</span><span class="params">(Key key,<span class="keyword">int</span> l,<span class="keyword">int</span> h)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(l&gt;h) <span class="keyword">return</span> l;</span><br><span class="line">        <span class="keyword">int</span> mid = (l+h)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">int</span> cmp=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>(keys[mid]!=<span class="keyword">null</span>)</span><br><span class="line">            cmp=key.compareTo(keys[mid]);</span><br><span class="line">        <span class="keyword">if</span>(cmp&lt;<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> rank(key,l,mid-<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp&gt;<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> rank(key,mid+<span class="number">1</span>,h);</span><br><span class="line">        <span class="keyword">return</span> mid;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a><code>二叉搜索树</code></h2><p>通过前面两个算法，我们可以知道链表能快速删除插入，而二分能快速查找。所以我们想找到一种结构既是链式结构，同时又能进行二分查找，同时保证查找和插入的高效性。</p>
+<p>答案就是<code>二叉搜索树</code>。</p>
+<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><ul>
+<li>是二叉树</li>
+<li>每个节点含有一个键和关联的值</li>
+<li>每个节点大于左子树上所有结点的值且小于右子树上所有节点的值</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>其实给出定义，实现就已经很清楚了。说白了就是从无到有构造一个二叉树，每次插入都和树中的节点进行比较，小的放左边，大的放右边。就如同<code>快速排序</code>，用一个主元把左右两边分开。</p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320221749.jpg" alt=""></p>
+<p>还是直接看代码清楚点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BST</span>&lt;<span class="title">Key</span> <span class="keyword">extends</span> <span class="title">Comparable</span>,<span class="title">Value</span>&gt;</span>&#123;</span><br><span class="line"></span><br><span class="line">    Node root;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(Key key,Value value)</span></span>&#123;</span><br><span class="line">        root = put(root,key,value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Node <span class="title">put</span><span class="params">(Node x, Key key, Value value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(x==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Node(key,value,<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> cmp = key.compareTo(x.key);</span><br><span class="line">        <span class="keyword">if</span>(cmp&lt;<span class="number">0</span>) x.left=put(x.left,key,value);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp&gt;<span class="number">0</span>) x.right=put(x.right,key,value);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            x.value=value;</span><br><span class="line">            x.N = size(x.right)+size(x.left)+<span class="number">1</span>; </span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Value <span class="title">get</span><span class="params">(Key key)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> get(root,key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Value <span class="title">get</span><span class="params">(Node x, Key key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(x==<span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">int</span> cmp =key.compareTo(x.key);</span><br><span class="line">        <span class="keyword">if</span>(cmp&lt;<span class="number">0</span>)   <span class="keyword">return</span> get(x.left,key);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp&gt;<span class="number">0</span>) <span class="keyword">return</span> get(x.right,key);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> x.value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="效率问题"><a href="#效率问题" class="headerlink" title="效率问题"></a>效率问题</h3><p><code>二叉搜索树</code>的查找和搜索在平均情况下时间复杂度都能达到<code>O(logn)</code>，而且能保证数据有序。<code>二叉搜索树</code>的中序遍历就是数据的顺序。我们貌似已经找到了一个最理想的算法。</p>
+<p>但是这个效率只是在平均情况下。如果数据是逆序，或者顺序，那么这棵树就会发生一边倒的情况使复杂度直接达到<code>O(n)</code>，就如同快排中选择到糟糕的主元(最大或者最小)。比快排糟糕的是，<code>快排</code>我们能通过随机打乱数据来避免这种情况发生。但<code>二叉搜索树</code>则不行，数据都是客户提供，直接插入到树中的，这种情况其实经常发生。</p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320222706.jpg" alt=""></p>
+<p>幸运的是我们有<code>平衡二叉树</code>可以解决这个问题。</p>
+<h2 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a><code>平衡二叉树</code></h2><h3 id="2-3树"><a href="#2-3树" class="headerlink" title="2-3树"></a><code>2-3树</code></h3><p>为了保持树平衡性，允许节点能保存两个键值对，且能连三个儿子。这样把节点分成了两种类型。</p>
+<ul>
+<li><code>2-节点</code> : 一个键值对，两个儿子。 (也就是标准的<code>二叉搜索树</code>)</li>
+<li><code>3-节点</code> : 两个键值对，三个儿子。 (两个键是有序的，左小右大。左儿子小于左边的键，右儿子大于右边的键，中间的儿子在两个键之间)</li>
+</ul>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320225636.jpg" alt=""></p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><p><code>2-3树</code>插入比较复杂。在插入的同时保持平衡性。</p>
+<ul>
+<li>向<code>2-节点</code>中插入键。这种情况比较简单。直接插入即可。</li>
+<li>向<code>3-节点</code>中插入键。比较特殊。先暂时把键插入到<code>3-节点</code>，此时这个节点中就有了三个键，然后再把这个节点分开。把中间的儿子简单当根，左右两边的键当儿子。若父节点还是<code>3-节点</code>，则继续递归进行。</li>
+</ul>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/search2-3_insertion.svg.png" alt=""></p>
+<h4 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h4><p><code>2-3树</code>性能可以说是比较好的。不管数据怎么样，查找删除操作时间复杂度都能达到O(logn)。<br>但是<code>2-3树</code>实现比较复杂，需要掌控的情况很多，剥离节点，传递节点等操作，都需要很复杂的代码，且也会耗费不少的时间。所以我们一般不怎么用原始的<code>2-3树</code>，而是用<code>2-3树</code>的变形<code>红黑树</code>.</p>
+<h3 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a><code>红黑树</code></h3><p><code>红黑树</code>最方便的地方除了插入和删除操作的代码略复杂以外，另外的操作都可以直接复制<code>二叉搜索树</code>。</p>
+<p><code>红黑树</code>是<code>2-3树</code>的变形，把<code>3-节点</code>分离开来使之成为普通的<code>2-节点</code>。但是怎么表现分离开的节点之间的联系呢。我们用红线把他们连起来。</p>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320231811.jpg" alt=""></p>
+<p>巧妙地结合<code>二叉搜索树</code>的高效查找操作和<code>2-3树</code>的平衡插入操作。</p>
+<p>每个节点都只有一根连向父节点的线。这个线的颜色称为节点的颜色。</p>
+<h4 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h4><p>我们通过旋转来维持树的平衡。一般有两种情况需要旋转。</p>
+<ul>
+<li>连续两个左节点的颜色为红色,向右转</li>
+<li>右节点的颜色为红色，向左转</li>
+<li>第三种情况是左右两边都为红色。最好处理，不需要旋转。只需要把左右两个儿子的颜色改成黑色，再把自己的颜色改成黑色。可以想象成把3个键值对<code>3-节点</code>剥离开。</li>
+</ul>
+<p><img src="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320232738.jpg" alt=""></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlackRedBST</span>&lt;<span class="title">Key</span> <span class="keyword">extends</span> <span class="title">Comparable</span>,<span class="title">Value</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">boolean</span> RED = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">boolean</span> BLACK = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">private</span> Node root;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(Key key,Value value)</span></span>&#123;</span><br><span class="line">        root = put(root,key,value);</span><br><span class="line">        root.color = BLACK;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Node <span class="title">put</span><span class="params">(Node x, Key key, Value value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(x==<span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">new</span> Node(key,value,<span class="number">0</span>,RED);</span><br><span class="line">        <span class="keyword">int</span> cmp = key.compareTo(x.key);</span><br><span class="line">        <span class="keyword">if</span>(cmp&lt;<span class="number">0</span>) x.left = put(x.left,key,value);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp&gt;<span class="number">0</span>) x.right = put(x.right,key,value);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp==<span class="number">0</span>) x.value =value;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>( isRED(x.right) &amp;&amp; !isRED(x.left)) x=rotateLeft(x);</span><br><span class="line">        <span class="keyword">if</span>( isRED(x.left) &amp;&amp; isRED(x.left.left)) x=rotateRight(x);</span><br><span class="line">        <span class="keyword">if</span>( isRED(x.left) &amp;&amp; isRED(x.right)) flipColor(x);</span><br><span class="line">        x.N = size(x.right) + size(x.left) +<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span>  x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">flipColor</span><span class="params">(Node x)</span> </span>&#123;</span><br><span class="line">        x.right.color = BLACK;</span><br><span class="line">        x.left.color = BLACK;</span><br><span class="line">        x.color = RED;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Node <span class="title">rotateLeft</span><span class="params">(Node x)</span> </span>&#123;</span><br><span class="line">        Node r =x.right;</span><br><span class="line">        x.right = r.left;</span><br><span class="line">        r.left = x;</span><br><span class="line">        r.color = x.color;</span><br><span class="line">        x.color = RED;</span><br><span class="line">        x.N = size(x.left)+size(x.right) +<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Node <span class="title">rotateRight</span><span class="params">(Node x)</span> </span>&#123;</span><br><span class="line">        Node r =x.left;</span><br><span class="line">        x.left = r.right;</span><br><span class="line">        r.right = x;</span><br><span class="line">        r.left.color = RED;</span><br><span class="line">        r.right.color = RED;</span><br><span class="line">        r.color =BLACK;</span><br><span class="line">        x.N = size(x.left)+size(x.right) +<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="性能分析-1"><a href="#性能分析-1" class="headerlink" title="性能分析"></a>性能分析</h4><p>无论数据如何，插入删除时间复杂度都为<code>O(logn)</code>，可以说达到了理想状态，且代码简单。</p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>分别对四个文件进行插入搜索操作。</p>
+<ul>
+<li><code>tale.txt</code>(779kb)<br>顺序查找(7.143秒) 二分查找(0.46秒) <code>二叉搜索树</code>(0.191秒) <code>红黑树</code>(0.237秒)</li>
+<li><code>leipzig100k.txt</code>(12670kb)<br>顺序查找(无) 二分查找(13.911秒) <code>二叉搜索树</code>(1.389秒) <code>红黑树</code>(1.442秒)</li>
+<li><code>leipzig300k.txt</code>(37966kb)<br>顺序查找(无) 二分查找(60.222秒) <code>二叉搜索树</code>(2.742秒) <code>红黑树</code>(3.104秒)</li>
+<li><code>leipzig1m.txt</code>(126607kb)<br>顺序查找(无) 二分查找(无) <code>二叉搜索树</code>(3.016秒) <code>红黑树</code>(2.797秒)</li>
+</ul>
+<p>由上面的数据分析，顺序查找实际是非常慢的。而二分查找对小型数据还是比较快，但是数据一大就不行了。</p>
+<p>而这里的<code>二叉搜索树</code>和<code>红黑树</code>，无论什么数据效率都是极高。而且由<code>leipzig300k.txt</code>到<code>leipzig1m.txt</code>数据几乎翻了4倍，而这两种算法的效率几乎没收什么影响。</p>
+<p>这里因为我的数据比较平均的关系，比较不出红黑树和二叉搜索树的差异。我自己构造了一组数据进行测试。完全逆序的<code>100000</code>个数进行插入删除。</p>
+<ul>
+<li>红黑树(0.173秒)</li>
+<li>二叉搜索树(StackOverflow)</li>
+</ul>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p><img src="http://7xrsib.com1.z0.glb.clouddn.com/searchQQ%E6%88%AA%E5%9C%9620160320233331.jpg" alt=""></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>维基百科</p>
+<p><a href="http://www.amazon.cn/%E5%9B%BE%E7%81%B5%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E4%B8%9B%E4%B9%A6-%E7%AE%97%E6%B3%95-%E5%A1%9E%E5%A5%87%E5%A8%81%E5%85%8B/dp/B009OCFQ0O/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1457882078&amp;sr=1-1&amp;keywords=%E7%AE%97%E6%B3%95" target="_blank" rel="external">算法 4th</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/24/用拉链法和线性探测法解决哈希冲突/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/24/最短路径算法总结/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">Artikel</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序查找"><span class="nav-number">2.</span> <span class="nav-text">顺序查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二分查找"><span class="nav-number">3.</span> <span class="nav-text">二分查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉搜索树"><span class="nav-number">4.</span> <span class="nav-text">二叉搜索树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">4.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">4.2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效率问题"><span class="nav-number">4.3.</span> <span class="nav-text">效率问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#平衡二叉树"><span class="nav-number">5.</span> <span class="nav-text">平衡二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3树"><span class="nav-number">5.1.</span> <span class="nav-text">2-3树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实现原理"><span class="nav-number">5.1.1.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性能分析"><span class="nav-number">5.1.2.</span> <span class="nav-text">性能分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#红黑树"><span class="nav-number">5.2.</span> <span class="nav-text">红黑树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#实现-1"><span class="nav-number">5.2.1.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#性能分析-1"><span class="nav-number">5.2.2.</span> <span class="nav-text">性能分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能测试"><span class="nav-number">6.</span> <span class="nav-text">性能测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">7.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">8.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

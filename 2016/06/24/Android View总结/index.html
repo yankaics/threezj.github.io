@@ -1,0 +1,606 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="关于Android View控件Android中控件大致被分为两类ViewGroup,View。ViewGroup作为容器管理View。Android视图，是类似于Dom树的架构。父视图负责测量定位绘制等操作。我们经常在用的findViewById 方法代价昂贵的原因，就是因为他负责至上而下遍历整棵控件树，来寻找View实例，在重复操作中尽量少用。现在在用的很多控件都是直接或者间接继承自View的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2016/06/24/Android View总结/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="关于Android View控件Android中控件大致被分为两类ViewGroup,View。ViewGroup作为容器管理View。Android视图，是类似于Dom树的架构。父视图负责测量定位绘制等操作。我们经常在用的findViewById 方法代价昂贵的原因，就是因为他负责至上而下遍历整棵控件树，来寻找View实例，在重复操作中尽量少用。现在在用的很多控件都是直接或者间接继承自View的">
+<meta property="og:image" content="http://ww2.sinaimg.cn/mw690/87dacc16gw1ez2rbxd8lsj20mw0d9wfy.jpg">
+<meta property="og:image" content="http://hujiaweibujidao.github.io/images/androidheros_ui.png">
+<meta property="og:image" content="http://hi.csdn.net/attachment/201112/29/0_132516479540V4.gif">
+<meta property="og:image" content="http://img.blog.csdn.net/20141106113343781?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3lfYno=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:updated_time" content="2016-06-23T15:33:18.413Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="关于Android View控件Android中控件大致被分为两类ViewGroup,View。ViewGroup作为容器管理View。Android视图，是类似于Dom树的架构。父视图负责测量定位绘制等操作。我们经常在用的findViewById 方法代价昂贵的原因，就是因为他负责至上而下遍历整棵控件树，来寻找View实例，在重复操作中尽量少用。现在在用的很多控件都是直接或者间接继承自View的">
+<meta name="twitter:image" content="http://ww2.sinaimg.cn/mw690/87dacc16gw1ez2rbxd8lsj20mw0d9wfy.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/06/24/Android View总结/"/>
+
+  <title>  | Hexo </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Hexo</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            Über
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
+            <time itemprop="dateCreated" datetime="2016-06-24T00:04:52+08:00" content="2016-06-24">
+              2016-06-24
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="关于Android-View控件"><a href="#关于Android-View控件" class="headerlink" title="关于Android View控件"></a>关于Android View控件</h2><p>Android中控件大致被分为两类ViewGroup,View。ViewGroup作为容器管理View。Android视图，是类似于Dom树的架构。父视图负责测量定位绘制等操作。我们经常在用的<code>findViewById</code> 方法代价昂贵的原因，就是因为他负责至上而下遍历整棵控件树，来寻找View实例，在重复操作中尽量少用。现在在用的很多控件都是直接或者间接继承自View的，如下图。</p>
+<p><img src="http://ww2.sinaimg.cn/mw690/87dacc16gw1ez2rbxd8lsj20mw0d9wfy.jpg" alt="view 继承树"><br><a id="more"></a></p>
+<h2 id="Android-UI界面架构"><a href="#Android-UI界面架构" class="headerlink" title="Android UI界面架构"></a>Android UI界面架构</h2><p>每个Activity包含一个<code>PhoneWindow</code>对象，<code>PhoneWindow</code>设置<code>DecorView</code>为应用窗口的根视图。在里面就是熟悉的<code>TitleView</code>和<code>ContentView</code>,没错，平时使用的<code>setContentView()</code>就是设置的<code>ContentView</code>。</p>
+<p><img src="http://hujiaweibujidao.github.io/images/androidheros_ui.png" alt="UI 架构"></p>
+<h2 id="Android是如何绘制View的？"><a href="#Android是如何绘制View的？" class="headerlink" title="Android是如何绘制View的？"></a>Android是如何绘制View的？</h2><p>当一个Activity启动时，会被要求绘制出它的布局。Android框架会处理这个请求，当然前提是Activity提供了合理的布局。绘制从根视图开始，从上至下遍历整棵视图树，每一个<code>ViewGroup</code>负责让自己的子<code>View</code>被绘制，每一个<code>View</code>负责绘制自己，通过<code>draw()</code>方法.绘制过程分三步走。</p>
+<ul>
+<li>Measure</li>
+<li>Layout</li>
+<li>Draw</li>
+</ul>
+<p>整个绘制流程是在<code>ViewRoot</code>中的<code>performTraversals()</code>方法展开的。部分源代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">performTraversals</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">//最外层的根视图的widthMeasureSpec和heightMeasureSpec由来</span></span><br><span class="line">    <span class="comment">//lp.width和lp.height在创建ViewGroup实例时等于MATCH_PARENT</span></span><br><span class="line">    <span class="keyword">int</span> childWidthMeasureSpec = getRootMeasureSpec(mWidth, lp.width);</span><br><span class="line">    <span class="keyword">int</span> childHeightMeasureSpec = getRootMeasureSpec(mHeight, lp.height);</span><br><span class="line">    ......</span><br><span class="line">    mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);</span><br><span class="line">    ......</span><br><span class="line">    mView.layout(<span class="number">0</span>, <span class="number">0</span>, mView.getMeasuredWidth(), mView.getMeasuredHeight());</span><br><span class="line">    ......</span><br><span class="line">    mView.draw(canvas);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在绘制之前当然要知道view的尺寸和绘制。所以先进行<code>measu</code>和<code>layout</code>（测量和定位），如下图。</p>
+<p><img src="http://hi.csdn.net/attachment/201112/29/0_132516479540V4.gif" alt="绘制流程"></p>
+<h2 id="Measure过程"><a href="#Measure过程" class="headerlink" title="Measure过程"></a>Measure过程</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">measure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;  </span><br><span class="line">    <span class="comment">//....  </span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">//回调onMeasure()方法    </span></span><br><span class="line">    onMeasure(widthMeasureSpec, heightMeasureSpec);  </span><br><span class="line">     </span><br><span class="line">    <span class="comment">//more  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>计算view的实际大小，获得高宽存入<code>mMeasuredHeight</code>和<code>mMeasureWidth</code>，<code>measure(int, int)</code>传入的两个参数。<code>MeasureSpec</code>是一个32位int值，高2位为测量的模式，低30位为测量的大小。测量的模式可以分为以下三种。</p>
+<ul>
+<li><p>EXACTLY<br>精确值模式，当<code>layout_width</code>或<code>layout_height</code>指定为具体数值，或者为<code>match_parent</code>时，系统使用EXACTLY。</p>
+</li>
+<li><p>AT_MOST<br>最大值模式，指定为<code>wrap_content</code>时，控件的尺寸不能超过父控件允许的最大尺寸。</p>
+</li>
+<li><p>UNSPECIFIED<br>不指定测量模式，View想多大就多大，一般不太使用。</p>
+</li>
+</ul>
+<p>根据上面的源码可知，measure方法不可被重写，自定义时需要重写的是<code>onMeasure</code>方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),</span><br><span class="line">                getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查看源码可知最终的高宽是调用<code>setMeasuredDimension()</code>设定的,如果不重写，默认是直接调用<code>getDefaultSize</code>获取尺寸的。</p>
+<p>使用View的getMeasuredWidth()和getMeasuredHeight()方法来获取View测量的宽高，必须保证这两个方法在onMeasure流程之后被调用才能返回有效值。</p>
+<h2 id="Layout过程"><a href="#Layout过程" class="headerlink" title="Layout过程"></a>Layout过程</h2><p>Layout方法就是用来确定view布局的位置，就好像你知道了一件东西的大小以后，总要知道位置才能画上去。</p>
+<p><code>mView.layout(0, 0, mView.getMeasuredWidth(), mView.getMeasuredHeight());</code></p>
+<p>layout获取四个参数，左，上，右，下坐标，相对于父视图而言。这里可以看到，使用了刚刚测量的宽和高。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">layout</span><span class="params">(<span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> oldL = mLeft;</span><br><span class="line">    <span class="keyword">int</span> oldT = mTop;</span><br><span class="line">    <span class="keyword">int</span> oldB = mBottom;</span><br><span class="line">    <span class="keyword">int</span> oldR = mRight;</span><br><span class="line">    <span class="keyword">boolean</span> changed = setFrame(l, t, r, b);</span><br><span class="line">    <span class="keyword">if</span> (changed || (mPrivateFlags &amp; LAYOUT_REQUIRED) == LAYOUT_REQUIRED) &#123;</span><br><span class="line">        .....</span><br><span class="line">        onLayout(changed, l, t, r, b);</span><br><span class="line">        .....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过<code>setFrame</code>设置坐标。如果坐标改变过了，则重新进行定位。如果是View对象，那么onLayout是个空方法。因为定位是由ViewGroup确定的。</p>
+<p>当layout结束以后<code>getWidth()</code>与<code>getHeight()</code>才会返回正确的值。</p>
+<p>这里出现一个问题，<code>getWidth/Height()</code> and <code>getMeasuredWidth/Height()</code>有什么区别？  </p>
+<ul>
+<li><code>getWidth()</code>:View在設定好佈局後整個View的寬度。</li>
+<li><code>getMeasuredWidth()</code>:對View上的內容進行測量後得到的View內容佔據的寬度</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20141106113343781?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3lfYno=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="getwidth"></p>
+<h2 id="Draw过程"><a href="#Draw过程" class="headerlink" title="Draw过程"></a>Draw过程</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        ......</span><br><span class="line">        <span class="comment">/*</span><br><span class="line">         * Draw traversal performs several drawing steps which must be executed</span><br><span class="line">         * in the appropriate order:</span><br><span class="line">         *</span><br><span class="line">         *      1. Draw the background</span><br><span class="line">         *      2. If necessary, save the canvas' layers to prepare for fading</span><br><span class="line">         *      3. Draw view's content</span><br><span class="line">         *      4. Draw children</span><br><span class="line">         *      5. If necessary, draw the fading edges and restore layers</span><br><span class="line">         *      6. Draw decorations (scrollbars for instance)</span><br><span class="line">         */</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 1, draw the background, if needed</span></span><br><span class="line">        ......</span><br><span class="line">        <span class="keyword">if</span> (!dirtyOpaque) &#123;</span><br><span class="line">            drawBackground(canvas);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// skip step 2 &amp; 5 if possible (common case)</span></span><br><span class="line">        ......</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 2, save the canvas' layers</span></span><br><span class="line">        ......</span><br><span class="line">            <span class="keyword">if</span> (drawTop) &#123;</span><br><span class="line">                canvas.saveLayer(left, top, right, top + length, <span class="keyword">null</span>, flags);</span><br><span class="line">            &#125;</span><br><span class="line">        ......</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 3, draw the content</span></span><br><span class="line">        <span class="keyword">if</span> (!dirtyOpaque) onDraw(canvas);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 4, draw the children</span></span><br><span class="line">        dispatchDraw(canvas);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 5, draw the fade effect and restore layers</span></span><br><span class="line">        ......</span><br><span class="line">        <span class="keyword">if</span> (drawTop) &#123;</span><br><span class="line">            matrix.setScale(<span class="number">1</span>, fadeHeight * topFadeStrength);</span><br><span class="line">            matrix.postTranslate(left, top);</span><br><span class="line">            fade.setLocalMatrix(matrix);</span><br><span class="line">            p.setShader(fade);</span><br><span class="line">            canvas.drawRect(left, top, right, top + length, p);</span><br><span class="line">        &#125;</span><br><span class="line">        ......</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Step 6, draw decorations (scrollbars)</span></span><br><span class="line">        onDrawScrollBars(canvas);</span><br><span class="line">        ......</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>重点是第三步调用onDraw方法。其它几步都是绘制一些边边角角的东西比如背景、scrollBar之类的。其中<code>dispatchDraw</code>，是用来递归调用子View,如果没有则不需要。</p>
+<p>onDraw方法是需要自己实现的，因为每个控件绘制的内容不同。主要用canvas对象进行绘制，这里就不说了。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="http://blog.csdn.net/guolin_blog/article/details/16330267" target="_blank" rel="external">Android视图绘制流程完全解析，带你一步步深入了解View(二)</a></li>
+<li><a href="http://blog.csdn.net/yanbober/article/details/46128379" target="_blank" rel="external">Android应用层View绘制流程与源码分析</a></li>
+<li><a href="http://developer.android.com/intl/zh-cn/guide/topics/ui/how-android-draws.html" target="_blank" rel="external">How Android Draws Views</a></li>
+<li><a href="http://www.amazon.cn/Android%E7%BE%A4%E8%8B%B1%E4%BC%A0-%E5%BE%90%E5%AE%9C%E7%94%9F/dp/B01481RAA4/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1450359477&amp;sr=1-1&amp;keywords=android%E7%BE%A4%E8%8B%B1%E4%BC%A0" target="_blank" rel="external">《Android群英传》</a></li>
+<li><a href="http://stackoverflow.com/questions/8657540/what-is-the-difference-between-getwidth-height-and-getmeasuredwidth-height-i" target="_blank" rel="external">What is the difference between getWidth/Height() and getMeasuredWidth/Height() in Android SDK?</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/24/CSAPP Cache 详细解析/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/24/Android Studio莫名奇妙错误系列/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="John Doe" />
+          <p class="site-author-name" itemprop="name">John Doe</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">Artikel</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于Android-View控件"><span class="nav-number">1.</span> <span class="nav-text">关于Android View控件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-UI界面架构"><span class="nav-number">2.</span> <span class="nav-text">Android UI界面架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android是如何绘制View的？"><span class="nav-number">3.</span> <span class="nav-text">Android是如何绘制View的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Measure过程"><span class="nav-number">4.</span> <span class="nav-text">Measure过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Layout过程"><span class="nav-number">5.</span> <span class="nav-text">Layout过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Draw过程"><span class="nav-number">6.</span> <span class="nav-text">Draw过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
