@@ -88,35 +88,23 @@
 
 <meta name="description" content="前言花了一个礼拜的时间阅读了 how tomcat works，本文基于此书，整理了一下Tomcat 5的基本架构，其实也没什么多复杂的东西，无非是解析Http请求，然后调用相应的Servlet。另推荐看CSAPP的网络编程那一章
 本文不以别人能看懂为目的，仅作自己备忘笔记只用。
-基本架构Tomcat由两个模块协同合作
-
-connector
-container
-
-connector 负责解析处理H">
+顺便问问有无需要暑假实习的？坐标杭州，Java后台方向。有意可联系我 threezj@hotmail.com
+基本架构">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tomcat 架构探索">
 <meta property="og:url" content="http://threezj.com/2016/06/25/Tomcat 架构探索/index.html">
 <meta property="og:site_name" content="一派胡言">
 <meta property="og:description" content="前言花了一个礼拜的时间阅读了 how tomcat works，本文基于此书，整理了一下Tomcat 5的基本架构，其实也没什么多复杂的东西，无非是解析Http请求，然后调用相应的Servlet。另推荐看CSAPP的网络编程那一章
 本文不以别人能看懂为目的，仅作自己备忘笔记只用。
-基本架构Tomcat由两个模块协同合作
-
-connector
-container
-
-connector 负责解析处理H">
-<meta property="og:updated_time" content="2016-06-24T17:17:47.076Z">
+顺便问问有无需要暑假实习的？坐标杭州，Java后台方向。有意可联系我 threezj@hotmail.com
+基本架构">
+<meta property="og:updated_time" content="2016-06-24T17:24:01.765Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Tomcat 架构探索">
 <meta name="twitter:description" content="前言花了一个礼拜的时间阅读了 how tomcat works，本文基于此书，整理了一下Tomcat 5的基本架构，其实也没什么多复杂的东西，无非是解析Http请求，然后调用相应的Servlet。另推荐看CSAPP的网络编程那一章
 本文不以别人能看懂为目的，仅作自己备忘笔记只用。
-基本架构Tomcat由两个模块协同合作
-
-connector
-container
-
-connector 负责解析处理H">
+顺便问问有无需要暑假实习的？坐标杭州，Java后台方向。有意可联系我 threezj@hotmail.com
+基本架构">
 
 
 
@@ -328,6 +316,7 @@ connector 负责解析处理H">
       
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>花了一个礼拜的时间阅读了 <code>how tomcat works</code>，本文基于此书，整理了一下<code>Tomcat 5</code>的基本架构，其实也没什么多复杂的东西，无非是解析<code>Http</code>请求，然后调用相应的<code>Servlet</code>。另推荐看<code>CSAPP</code>的网络编程那一章</p>
 <p>本文不以别人能看懂为目的，仅作自己备忘笔记只用。</p>
+<p>顺便问问有无需要<code>暑假实习</code>的？坐标<code>杭州</code>，<code>Java后台</code>方向。有意可联系我 <code>threezj@hotmail.com</code></p>
 <h2 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h2><p><code>Tomcat</code>由两个模块协同合作</p>
 <ul>
 <li><code>connector</code></li>
