@@ -1,0 +1,705 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,Tomcat," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一派胡言" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="前言花了一个礼拜的时间阅读了 how tomcat works，本文基于此书，整理了一下Tomcat 5的基本架构，其实也没什么多复杂的东西，无非是解析Http请求，然后调用相应的Servlet。另推荐看CSAPP的网络编程那一章
+本文不以别人能看懂为目的，仅作自己备忘笔记只用。
+基本架构Tomcat由两个模块协同合作
+
+connector
+container
+
+connector 负责解析处理H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat 架构探索">
+<meta property="og:url" content="http://threezj.com/2016/06/25/Tomcat 架构探索/index.html">
+<meta property="og:site_name" content="一派胡言">
+<meta property="og:description" content="前言花了一个礼拜的时间阅读了 how tomcat works，本文基于此书，整理了一下Tomcat 5的基本架构，其实也没什么多复杂的东西，无非是解析Http请求，然后调用相应的Servlet。另推荐看CSAPP的网络编程那一章
+本文不以别人能看懂为目的，仅作自己备忘笔记只用。
+基本架构Tomcat由两个模块协同合作
+
+connector
+container
+
+connector 负责解析处理H">
+<meta property="og:updated_time" content="2016-06-24T17:14:56.884Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tomcat 架构探索">
+<meta name="twitter:description" content="前言花了一个礼拜的时间阅读了 how tomcat works，本文基于此书，整理了一下Tomcat 5的基本架构，其实也没什么多复杂的东西，无非是解析Http请求，然后调用相应的Servlet。另推荐看CSAPP的网络编程那一章
+本文不以别人能看懂为目的，仅作自己备忘笔记只用。
+基本架构Tomcat由两个模块协同合作
+
+connector
+container
+
+connector 负责解析处理H">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://threezj.com/2016/06/25/Tomcat 架构探索/"/>
+
+  <title> Tomcat 架构探索 | 一派胡言 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-hk">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d241596b4ad0af8cde22ce7719177cca";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一派胡言</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            歸檔
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            標籤
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Tomcat 架构探索
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">發表於</span>
+            <time itemprop="dateCreated" datetime="2016-06-25T01:13:06+08:00" content="2016-06-25">
+              2016-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/06/25/Tomcat 架构探索/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/25/Tomcat 架构探索/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>花了一个礼拜的时间阅读了 <code>how tomcat works</code>，本文基于此书，整理了一下<code>Tomcat 5</code>的基本架构，其实也没什么多复杂的东西，无非是解析<code>Http</code>请求，然后调用相应的<code>Servlet</code>。另推荐看<code>CSAPP</code>的网络编程那一章</p>
+<p>本文不以别人能看懂为目的，仅作自己备忘笔记只用。</p>
+<h2 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h2><p><code>Tomcat</code>由两个模块协同合作</p>
+<ul>
+<li><code>connector</code></li>
+<li><code>container</code></li>
+</ul>
+<p><code>connector</code> 负责解析处理<code>HTTP</code>请求，比如说<code>请求头</code>,<code>查询字符串</code>,<code>请求参数</code>之类的。生成<code>HttpRequest</code>和<code>HttpResponse</code><br>之后交给<code>container</code>，由它负责调用相应的<code>Servlet</code>。<br><a id="more"></a></p>
+<h2 id="Connector"><a href="#Connector" class="headerlink" title="Connector"></a>Connector</h2><p><code>Tomcat</code>默认的<code>Connector</code>为<code>HttpConnector</code>。作为<code>Connector</code>必须要实现<code>Connector</code>这个接口。</p>
+<p><code>Tomcat</code>启动以后会开启一个线程，做一个死循环，通过<code>ServerSocket</code>来等待请求。一旦得到请求，生成<code>Socket</code>，注意这里<code>HttpConnector</code>并不会自己处理<code>Socket</code>，而是把它交给<code>HttpProcessor</code>。详细看下面代码，这里我只保留了关键代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Loop until we receive a shutdown command</span></span><br><span class="line">        <span class="keyword">while</span> (!stopped) &#123;</span><br><span class="line">            Socket socket = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                socket = serverSocket.accept(); <span class="comment">//等待链接</span></span><br><span class="line">            &#125; <span class="keyword">catch</span> (AccessControlException ace) &#123;</span><br><span class="line">                log(<span class="string">"socket accept security exception"</span>, ace);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Hand this socket off to an appropriate processor</span></span><br><span class="line">            HttpProcessor processor = createProcessor();</span><br><span class="line">            processor.assign(socket);  <span class="comment">//这里是立刻返回的</span></span><br><span class="line">            <span class="comment">// The processor will recycle itself when it finishes</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>注意一点，上面的<code>processor.assign(socket);</code>是立刻返回的，并不会阻塞在那里等待。因为Tomcat不可能一次只能处理一个请求，所以是异步的，每个<code>processor</code>处理都是一个单独的线程。</p>
+<h3 id="HttpProcessor"><a href="#HttpProcessor" class="headerlink" title="HttpProcessor"></a>HttpProcessor</h3><p>上面的代码并没有显示调用<code>HttpProcessor</code>的<code>process</code>方法，那这个方法是怎么调用的呢？我们来看一下<code>HttpProcessor</code>的<code>run</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Process requests until we receive a shutdown signal</span></span><br><span class="line">        <span class="keyword">while</span> (!stopped) &#123;</span><br><span class="line">            <span class="comment">// Wait for the next socket to be assigned</span></span><br><span class="line">            Socket socket = await(); </span><br><span class="line">            <span class="keyword">if</span> (socket == <span class="keyword">null</span>)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="comment">// Process the request from this socket</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                process(socket);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">                log(<span class="string">"process.invoke"</span>, t);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// Finish up this request</span></span><br><span class="line">            connector.recycle(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>我们发现他是调用<code>await</code>方法来阻塞等待获得<code>socket</code>方法。而之前<code>Connector</code>是调用<code>assign</code>分配的，这是什么原因？<br>下面仔细看<code>await</code>和<code>assign</code>方法。这两个方法协同合作，当<code>assign</code>获取<code>socket</code>时会通知<code>await</code>然后返回<code>socket</code>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">assign</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Wait for the Processor to get the previous Socket</span></span><br><span class="line">    <span class="keyword">while</span> (available) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Store the newly available Socket and notify our thread</span></span><br><span class="line">    <span class="keyword">this</span>.socket = socket;</span><br><span class="line">    available = <span class="keyword">true</span>;</span><br><span class="line">    notifyAll();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> Socket <span class="title">await</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Wait for the Connector to provide a new Socket</span></span><br><span class="line">    <span class="keyword">while</span> (!available) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Notify the Connector that we have received this Socket</span></span><br><span class="line">    Socket socket = <span class="keyword">this</span>.socket;</span><br><span class="line">    available = <span class="keyword">false</span>;</span><br><span class="line">    notifyAll();</span><br><span class="line">    <span class="keyword">return</span> (socket);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>默认<code>available</code>为<code>false</code>。</p>
+<p>接下来就是剩下的事情就是解析请求，填充<code>HttpRequest</code>和<code>HttpResponse</code>对象，然后交给<code>container</code>负责。<br>这里我不过多赘述如何解析<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//parse</span></span><br><span class="line">    ....</span><br><span class="line">    connector.getContainer().invoke(request, response);</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Container"><a href="#Container" class="headerlink" title="Container"></a>Container</h2><blockquote>
+<p>A Container is an object that can execute requests received from a client, and return responses based on those requests </p>
+</blockquote>
+<p><code>Container</code>是一个接口，实现了这个接口的类的实例，可以处理接收的请求，调用对应的<code>Servlet</code>。</p>
+<p>总共有四类<code>Container</code>，这四个<code>Container</code>之间并不是平行关系，而是父子关系</p>
+<ul>
+<li><code>Engine</code> - 最顶层的容器，可以包含多个<code>Host</code></li>
+<li><code>Host</code> - 代表一个虚拟主机，可以包含多个<code>Context</code></li>
+<li><code>Context</code> - 代表一个<code>web应用</code>，也就是<code>ServletContext</code>，可以包含多个<code>Wrappers</code></li>
+<li><code>Wrapper</code> - 代表一个<code>Servlet</code>,不能包含别的容器了，这是最底层</li>
+</ul>
+<h3 id="Container的调用"><a href="#Container的调用" class="headerlink" title="Container的调用"></a>Container的调用</h3><p>容器好比是一个加工厂，加工接受的<code>request</code>，加工方式和流水线也很像，但又有点区别。这里会用到一个叫做<code>Pipeline</code>的 东西，中文翻译为<code>管道</code>，<code>request</code>就放在管道里顺序加工，进行加工的工具叫做<code>Valve</code>，好比手术刀，<code>Pipeline</code>可添加多个<code>Valve</code>,最后加工的工具称为<code>BaseValve</code></p>
+<p>上面可能讲的比较抽象，接下来我们来看代码。<code>Engine</code>是顶层容器，所以上面<code>invoke</code>，执行的就是<code>Engine</code>的方法。<code>StandardEngine</code>是<code>Engine</code>的默认实现，注意它也同时实现了<code>Pipeline</code>接口，且包含了<code>Pipeline</code>。</p>
+<p>它的构造方法同时指定了<code>baseValve</code>,也就是管道最后一个调用的<code>Valve</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">StandardEngine</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line">    pipeline.setBasic(<span class="keyword">new</span> StandardEngineValve());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>好，接着我们看<code>invoke</code>,这个方法是继承自<code>ContainerBase</code>。只有一行，之间交给<code>pipeline</code>，进行加工。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(Request request, Response response)</span></span><br><span class="line">        <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        pipeline.invoke(request, response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面是<code>StandardPipeline</code>的<code>invoke</code>实现，也就是默认的<code>pipeline</code>实现。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(Request request, Response response)</span></span><br><span class="line">        <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        <span class="comment">// Invoke the first Valve in this pipeline for this request</span></span><br><span class="line">        (<span class="keyword">new</span> StandardPipelineValveContext()).invokeNext(request, response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>也只有一行！调用<code>StandardPipelineValveContext</code>的<code>invokeNext</code>方法，这是一个<code>pipeline</code>的内部类。让我们来看<br>具体代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invokeNext</span><span class="params">(Request request, Response response)</span></span><br><span class="line">            <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> subscript = stage;</span><br><span class="line">            stage = stage + <span class="number">1</span>;</span><br><span class="line">            <span class="comment">// Invoke the requested Valve for the current request thread</span></span><br><span class="line">            <span class="keyword">if</span> (subscript &lt; valves.length) &#123;</span><br><span class="line">                valves[subscript].invoke(request, response, <span class="keyword">this</span>);  <span class="comment">//加工</span></span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((subscript == valves.length) &amp;&amp; (basic != <span class="keyword">null</span>)) &#123;</span><br><span class="line">                basic.invoke(request, response, <span class="keyword">this</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ServletException</span><br><span class="line">                    (sm.getString(<span class="string">"standardPipeline.noValve"</span>));</span><br><span class="line">            &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>它调用了<code>pipeline</code>所用的<code>Valve</code>来对<code>request</code>做加工，当Valve执行完，会调用<code>BaseValve</code>,也就是上面的<code>StandardEngineValve</code>，<br>我们再来看看它的<code>invoke</code>方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Select the Host to be used for this Request</span></span><br><span class="line">StandardEngine engine = (StandardEngine) getContainer();</span><br><span class="line">Host host = (Host) engine.map(request, <span class="keyword">true</span>);</span><br><span class="line"><span class="keyword">if</span> (host == <span class="keyword">null</span>) &#123;</span><br><span class="line">    ((HttpServletResponse) response.getResponse()).sendError</span><br><span class="line">        (HttpServletResponse.SC_BAD_REQUEST,</span><br><span class="line">            sm.getString(<span class="string">"standardEngine.noHost"</span>,</span><br><span class="line">                        request.getRequest().getServerName()));</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Ask this Host to process this request</span></span><br><span class="line">host.invoke(request, response);</span><br></pre></td></tr></table></figure></p>
+<p>它通过<code>(Host) engine.map(request, true);</code>获取所对应的<code>Host</code>,然后进入到下一层容器中继续执行。后面的执行顺序<br>和<code>Engine</code>相同，我不过多赘述</p>
+<h4 id="执行顺序小结"><a href="#执行顺序小结" class="headerlink" title="执行顺序小结"></a>执行顺序小结</h4><p>经过一长串的invoke终于讲完了第一层容器的执行顺序。估计你们看的有点晕，我这里小结一下。</p>
+<blockquote>
+<p>Connector -&gt; HttpProcessor.process() -&gt; StandardEngine.invoke() -&gt; StandardPipeline.invoke() -&gt;<br>StandardPipelineValveContext.invokeNext() -&gt; valves.invoke() -&gt; StandardEngineValve.invoke() -&gt;<br>StandardHost.invoke()</p>
+</blockquote>
+<p>到这里位置Engine这一层结束。接下来进行Host，步骤完全一致</p>
+<blockquote>
+<p>StandardHost.invoke() -&gt; StandardPipeline.invoke() -&gt;<br>StandardPipelineValveContext.invokeNext() -&gt; valves.invoke() -&gt; StandardHostValve.invoke() -&gt;<br>StandardContext.invoke()</p>
+</blockquote>
+<p>然后再进行Context这一层的处理，到最后选择对应的Wrapping执行。</p>
+<h2 id="Wrapper"><a href="#Wrapper" class="headerlink" title="Wrapper"></a>Wrapper</h2><p><code>Wrapper</code>相当于一个<code>Servlet</code>实例，<code>StandardContext</code>会更根据的<code>request</code>来选择对应的<code>Wrapper</code>调用。我们直接来看看<br><code>Wrapper</code>的<code>basevalve</code>是如果调用<code>Servlet</code>的<code>service</code>方法的。下面是<code>StandardWrapperValve</code>的<code>invoke</code>方法，我省略了很多，<br>只看关键。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(Request request, Response response,</span><br><span class="line">                       ValveContext valveContext)</span></span><br><span class="line">        <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        <span class="comment">// Allocate a servlet instance to process this request</span></span><br><span class="line">        <span class="keyword">if</span> (!unavailable) &#123;</span><br><span class="line">            servlet = wrapper.allocate();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Create the filter chain for this request</span></span><br><span class="line">        ApplicationFilterChain filterChain =</span><br><span class="line">            createFilterChain(request, servlet);</span><br><span class="line">        <span class="comment">// Call the filter chain for this request</span></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> This also calls the servlet's service() method</span></span><br><span class="line">        String jspFile = wrapper.getJspFile();  <span class="comment">//是否是jsp</span></span><br><span class="line">        <span class="keyword">if</span> (jspFile != <span class="keyword">null</span>)</span><br><span class="line">            sreq.setAttribute(Globals.JSP_FILE_ATTR, jspFile);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            sreq.removeAttribute(Globals.JSP_FILE_ATTR);</span><br><span class="line">        <span class="keyword">if</span> ((servlet != <span class="keyword">null</span>) &amp;&amp; (filterChain != <span class="keyword">null</span>)) &#123;</span><br><span class="line">            filterChain.doFilter(sreq, sres);</span><br><span class="line">        &#125;</span><br><span class="line">        sreq.removeAttribute(Globals.JSP_FILE_ATTR);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>首先调用<code>wrapper.allocate()</code>,这个方法很关键，它会通过<code>反射</code>找到对应<code>servlet</code>的<code>class</code>文件，构造出实例返回给我们。然后创建一个<code>FilterChain</code>，<br>熟悉<code>j2ee</code>的各位应该对这个不陌生把？这就是我们在开发<code>web app</code>时使用的<code>filter</code>。然后就执行<code>doFilter</code>方法了，它又会调用<code>internalDoFilter</code>，我们来看这个<br>方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">internalDoFilter</span><span class="params">(ServletRequest request, ServletResponse response)</span></span><br><span class="line">        <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        <span class="comment">// Call the next filter if there is one</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.iterator.hasNext()) &#123;</span><br><span class="line">            ApplicationFilterConfig filterConfig =</span><br><span class="line">              (ApplicationFilterConfig) iterator.next();</span><br><span class="line">            Filter filter = <span class="keyword">null</span>;</span><br><span class="line">            </span><br><span class="line">            filter = filterConfig.getFilter();</span><br><span class="line">            filter.doFilter(request, response, <span class="keyword">this</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// We fell off the end of the chain -- call the servlet instance</span></span><br><span class="line">        <span class="keyword">if</span> ((request <span class="keyword">instanceof</span> HttpServletRequest) &amp;&amp;</span><br><span class="line">            (response <span class="keyword">instanceof</span> HttpServletResponse)) &#123;</span><br><span class="line">            servlet.service((HttpServletRequest) request,</span><br><span class="line">                            (HttpServletResponse) response);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            servlet.service(request, response);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>终于，在这个方法里看到了<code>service</code>方法，现在你知道在使用<code>filter</code>的时候如果不执行<code>doFilter</code>，<code>service</code>就不会执行的原因了把。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><code>Tomcat</code>的重要过程应该都在这里了，还值得一提的是<code>LifeCycle</code>接口，这里所有类几乎都实现了<code>LifeCycle</code>，<code>Tomcat</code>通过它来统一管理容器的生命流程，<br>大量运用观察者模式。有兴趣的同学可以自己看书</p>
+<h2 id="Referance"><a href="#Referance" class="headerlink" title="Referance"></a>Referance</h2><p><code>How Tomcat works</code></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+            <a href="/tags/Tomcat/" rel="tag">#Tomcat</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/04/CSAPP Cache 详细解析/" rel="next" title="CSAPP Cache 详细解析">
+                <i class="fa fa-chevron-left"></i> CSAPP Cache 详细解析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/06/25/Tomcat 架构探索/"
+           data-title="Tomcat 架构探索" data-url="http://threezj.com/2016/06/25/Tomcat 架构探索/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://7xrsib.com1.z0.glb.clouddn.com/avatar.jpg"
+               alt="Threezj" />
+          <p class="site-author-name" itemprop="name">Threezj</p>
+          <p class="site-description motion-element" itemprop="description">我向往安静且自由的生活</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">文章</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">標籤</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/threezj" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/zjthree" target="_blank" title="weibo">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本架构"><span class="nav-number">2.</span> <span class="nav-text">基本架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Connector"><span class="nav-number">3.</span> <span class="nav-text">Connector</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HttpProcessor"><span class="nav-number">3.1.</span> <span class="nav-text">HttpProcessor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Container"><span class="nav-number">4.</span> <span class="nav-text">Container</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Container的调用"><span class="nav-number">4.1.</span> <span class="nav-text">Container的调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#执行顺序小结"><span class="nav-number">4.1.1.</span> <span class="nav-text">执行顺序小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wrapper"><span class="nav-number">5.</span> <span class="nav-text">Wrapper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Referance"><span class="nav-number">7.</span> <span class="nav-text">Referance</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Threezj</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 強力驅動
+</div>
+
+<div class="theme-info">
+  主題 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"threezj-note"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>
