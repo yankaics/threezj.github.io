@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://threezj.com/"/>
-  <updated>2016-06-24T17:33:12.819Z</updated>
+  <updated>2016-06-26T13:42:06.418Z</updated>
   <id>http://threezj.com/</id>
   
   <author>
@@ -20,10 +20,9 @@
     <link href="http://threezj.com/2016/06/25/Tomcat%20%E6%9E%B6%E6%9E%84%E6%8E%A2%E7%B4%A2/"/>
     <id>http://threezj.com/2016/06/25/Tomcat 架构探索/</id>
     <published>2016-06-24T17:13:06.000Z</published>
-    <updated>2016-06-24T17:33:12.819Z</updated>
+    <updated>2016-06-26T13:42:06.418Z</updated>
     
     <content type="html">&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;花了一个礼拜的时间阅读了 &lt;code&gt;how tomcat works&lt;/code&gt;，本文基于此书，整理了一下&lt;code&gt;Tomcat 5&lt;/code&gt;的基本架构，其实也没什么多复杂的东西，无非是解析&lt;code&gt;Http&lt;/code&gt;请求，然后调用相应的&lt;code&gt;Servlet&lt;/code&gt;。另推荐看&lt;code&gt;CSAPP&lt;/code&gt;的网络编程那一章&lt;/p&gt;
-&lt;p&gt;顺便问问有无需要&lt;code&gt;暑假实习&lt;/code&gt;的？坐标&lt;code&gt;杭州&lt;/code&gt;，&lt;code&gt;Java后台&lt;/code&gt;方向。有意可联系我 &lt;code&gt;threezj@hotmail.com&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id=&quot;基本架构&quot;&gt;&lt;a href=&quot;#基本架构&quot; class=&quot;headerlink&quot; title=&quot;基本架构&quot;&gt;&lt;/a&gt;基本架构&lt;/h2&gt;&lt;p&gt;&lt;code&gt;Tomcat&lt;/code&gt;由两个模块协同合作&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;connector&lt;/code&gt;&lt;/li&gt;
@@ -79,7 +78,6 @@
     <summary type="html">
     
       &lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;花了一个礼拜的时间阅读了 &lt;code&gt;how tomcat works&lt;/code&gt;，本文基于此书，整理了一下&lt;code&gt;Tomcat 5&lt;/code&gt;的基本架构，其实也没什么多复杂的东西，无非是解析&lt;code&gt;Http&lt;/code&gt;请求，然后调用相应的&lt;code&gt;Servlet&lt;/code&gt;。另推荐看&lt;code&gt;CSAPP&lt;/code&gt;的网络编程那一章&lt;/p&gt;
-&lt;p&gt;顺便问问有无需要&lt;code&gt;暑假实习&lt;/code&gt;的？坐标&lt;code&gt;杭州&lt;/code&gt;，&lt;code&gt;Java后台&lt;/code&gt;方向。有意可联系我 &lt;code&gt;threezj@hotmail.com&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id=&quot;基本架构&quot;&gt;&lt;a href=&quot;#基本架构&quot; class=&quot;headerlink&quot; title=&quot;基本架构&quot;&gt;&lt;/a&gt;基本架构&lt;/h2&gt;&lt;p&gt;&lt;code&gt;Tomcat&lt;/code&gt;由两个模块协同合作&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;connector&lt;/code&gt;&lt;/li&gt;
